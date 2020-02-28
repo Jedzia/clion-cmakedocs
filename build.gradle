@@ -2,7 +2,7 @@ import org.gradle.api.internal.artifacts.repositories.DefaultIvyArtifactReposito
 
 buildscript {
   ext.ver = [
-      kotlin: "1.3.31",
+      kotlin: "1.3.61",
   ]
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${ver.kotlin}"
@@ -43,7 +43,7 @@ intellij {
   afterEvaluate {
     project.repositories.forEach { repo ->
       if (repo instanceof DefaultIvyArtifactRepository) {
-        if (repo.name.equals("ivy2")) {
+        if (repo.name == "ivy2") {
           repo.artifactPattern(
               "${gradle.gradleUserHomeDir}/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/[module]-[revision]/[artifact](.[ext])")
         }

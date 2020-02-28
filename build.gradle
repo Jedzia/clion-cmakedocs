@@ -13,7 +13,7 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.3.5"
+  id "org.jetbrains.intellij" version "0.4.8"
 }
 
 apply plugin: "idea"
@@ -30,12 +30,12 @@ def clionPath = getCLionPath()
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:${ver.kotlin}"
-  implementation "org.jetbrains.plugins:org.asciidoctor.intellij.asciidoc:0.24.3"
+  implementation "org.jetbrains.plugins:org.asciidoctor.intellij.asciidoc:0.30.39"
 }
 
 intellij {
   pluginName "clion-cmakedocs"
-  plugins = ["org.asciidoctor.intellij.asciidoc:0.24.3"]
+  plugins = ["org.asciidoctor.intellij.asciidoc:0.30.39"]
   localPath clionPath
   alternativeIdePath clionPath
   ideaDependencyCachePath = file("deps").absolutePath
@@ -71,4 +71,8 @@ def getCLionPath() {
     throw new GradleException("CLion path not found. Define clion.dir in local.properties file.")
   }
   return clionPath
+}
+
+buildSearchableOptions {
+  jbrVersion = '11_0_2b159'
 }

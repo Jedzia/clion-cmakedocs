@@ -2,7 +2,7 @@ import org.gradle.api.internal.artifacts.repositories.DefaultIvyArtifactReposito
 
 buildscript {
   ext.ver = [
-      kotlin: "1.3.61",
+      kotlin: "1.3.72",
   ]
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${ver.kotlin}"
@@ -24,18 +24,19 @@ repositories {
 }
 
 group "io.ringle.ij"
-version "19.3.3"
+version "20.1.1"
 
 def clionPath = getCLionPath()
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:${ver.kotlin}"
-  implementation "org.jetbrains.plugins:org.asciidoctor.intellij.asciidoc:0.30.39"
+  //implementation "org.jetbrains.plugins:org.asciidoctor.intellij.asciidoc:0.30.70"
+  implementation "org.asciidoctor:asciidoctorj:2.3.0"
 }
 
 intellij {
   pluginName "clion-cmakedocs"
-  plugins = ["org.asciidoctor.intellij.asciidoc:0.30.39"]
+  plugins = ["org.asciidoctor.intellij.asciidoc:0.30.70"]
   localPath clionPath
   alternativeIdePath clionPath
   ideaDependencyCachePath = file("deps").absolutePath

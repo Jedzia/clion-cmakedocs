@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/eddieringle/clion-cmakedocs">
     <id>io.ringle.ij.cmakedocs</id>
     <name>CMake Docs</name>
-    <version>19.3.3</version>
+    <version>20.1.1</version>
     <vendor>Jedzia</vendor>
 
     <description><![CDATA[
@@ -9,12 +9,13 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      Compatibility with CLion 2018.2
-      Compatibility with CLion 2019.3
+      Compatibility with CLion 2018.2,
+      Compatibility with CLion 2019.3,
+      Compatibility with CLion 2020.1 - used native org.asciidoctor
     ]]>
     </change-notes>
 
-    <idea-version since-build="193" />
+    <idea-version since-build="193.5662" />
 
     <depends>com.intellij.modules.cidr.lang</depends>
     <depends>com.intellij.modules.clion</depends>

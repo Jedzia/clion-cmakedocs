@@ -2,17 +2,21 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cmake.psi.CMakeCommandName
 import com.jetbrains.cmake.psi.CMakeElement
 import com.jetbrains.cmake.psi.CMakeLiteral
-import org.asciidoc.intellij.AsciiDoc
+import org.asciidoctor.Asciidoctor
+import org.asciidoctor.jruby.AsciidoctorJRuby.Factory.create
 import org.jetbrains.rpc.LOG
 import java.io.IOException
 import java.util.*
+
 
 class CMakeDocProvider : AbstractDocumentationProvider() {
 
@@ -22,9 +26,11 @@ class CMakeDocProvider : AbstractDocumentationProvider() {
 
     private var variableList = ArrayList<String>()
 
-    private val asciiDoc by lazy {
-        val tmpdir = createTempDir()
-        AsciiDoc(ProjectManager.getInstance().createProject(tmpdir.absolutePath, tmpdir.absolutePath), tmpdir, null, "clion-cmakedocs")
+    private val asciidoctor by lazy {
+       // val tmpdir = createTempDir()
+        //val prj = AsciiDoc(ProjectManager.getInstance().createProject(tmpdir.absolutePath, tmpdir.absolutePath), tmpdir, null, "clion-cmakedocs")
+        val asciidoctor: Asciidoctor = create()
+        asciidoctor
     }
 
     private fun runCMake(vararg args: String): Process {
@@ -73,6 +79,18 @@ class CMakeDocProvider : AbstractDocumentationProvider() {
         return null
     }
 
+    /*fun fuckYOu(): String? {
+        val x = ApplicationManager.getApplication().invokeAndWait({
+            val tmpdir = createTempDir()
+            val prj = AsciiDoc(ProjectManager.getInstance().createProject(tmpdir.absolutePath, tmpdir.absolutePath), tmpdir, null, "clion-cmakedocs$tmpdir")
+            val result = prj.render("bold *constrained* & **un**constrained", emptyList())
+            return@invokeAndWait Unit.let { result.toString() }
+        }, ModalityState.defaultModalityState())
+
+
+        return x.toString()
+    }*/
+
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
         return if (element == null || element !is CMakeElement) {
             null
@@ -82,7 +100,53 @@ class CMakeDocProvider : AbstractDocumentationProvider() {
                 is CMakeLiteral -> docForLiteral(element.text)
                 else -> null
             }.let {
-                if (it == null) null else asciiDoc.render(it, emptyList())
+                if (it == null) null
+                else {
+                    //asciiDoc.render(it, emptyList())
+                    //ApplicationManager.getApplication().isReadAccessAllowed
+                    //ApplicationManager.getApplication().isReadAccessAllowed
+                    val application: Application = ApplicationManager.getApplication()
+                    /*var res = "no WriteAccessAllowed"
+                    if (application.isWriteAccessAllowed)
+                        res = "WriteAccessAllowed"
+                    if (application.isReadAccessAllowed)
+                        res += ", ReadAccessAllowed"
+                    else
+                        res += ", no ReadAccessAllowed"
+                    return res*/
+
+                    if (application.isReadAccessAllowed) {
+                        return application.runReadAction(Computable<String>() {
+                            //val tmpdir = createTempDir()
+                            //val prj = AsciiDoc(ProjectManager.getInstance().createProject(tmpdir.absolutePath, tmpdir.absolutePath), tmpdir, null, "clion-cmakedocs$tmpdir")
+                            try {
+                                // prj.render("bold *constrained* & **un**constrained", emptyList())
+
+                                //val asciidoctor: Asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format)
+
+                                //val asciidoctor: Asciidoctor = create()
+                                //val output = asciidoctor.convert("Hello _Baeldung_!", HashMap())
+                                //val asciidoctor: Asciidoctor = create()
+                                val output = asciidoctor.convert(it, HashMap())
+                                output
+                                //asciiDoc.render(it, emptyList())
+
+                            } catch (e: IllegalStateException) {
+                                // handler
+                                return@Computable "IllegalStateException, $it"
+                            }
+                        })
+                    } else {
+                        it
+                    }
+
+                    /*var testMe = fuckYOu()
+                    val tmpdir = createTempDir()
+                    val prj = AsciiDoc(ProjectManager.getInstance().createProject(tmpdir.absolutePath, tmpdir.absolutePath), tmpdir, null, "clion-cmakedocs$tmpdir")
+                    prj.render("bold *constrained* & **un**constrained", emptyList())
+                    //"Drecksau"
+                    //it*/
+                }
             }
         }
     }
